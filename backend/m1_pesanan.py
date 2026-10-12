@@ -131,3 +131,54 @@ class LinkedList:
             self.tail = current
 
         self.size -=1
+
+import csv
+
+def muat_data_csv(nama_file, struktur_data):
+    print(f"Membaca data dari {nama_file}...")
+    try:
+        # Membuka file CSV
+        with open(nama_file, mode='r', encoding='utf-8') as file:
+            csv_reader = csv.reader(file)
+            
+            # Lewati baris pertama karena itu adalah header (judul kolom)
+            header = next(csv_reader)
+            
+            for baris in csv_reader:
+                # Lewati jika ada baris kosong di akhir file
+                if len(baris) < 9:
+                    continue
+                    
+                # Ambil angka prioritas dari kolom ke-6 (indeks 5)
+                angka_prioritas = int(baris[5])
+                
+                
+                data_pesanan = (baris[0], baris[1], baris[2], baris[3], baris[4], angka_prioritas, baris[6], baris[7], baris[8])
+                
+                # Masukkan ke dalam struktur data sesuai prioritasnya
+                if angka_prioritas == 1:
+                    struktur_data.insert(0, data_pesanan) # VIP menyerobot ke paling depan
+                elif angka_prioritas == 2:
+                    struktur_data.insert(1, data_pesanan) # Prioritas diletakkan setelah VIP
+                else:
+                    struktur_data.append(data_pesanan)    # Reguler (3) antre di belakang
+                    
+        print(f"Berhasil! Total antrean saat ini: {struktur_data.size} pesanan.")
+        
+    except FileNotFoundError:
+        print(f"ERROR: File {nama_file} tidak ditemukan. Cek kembali letak foldernya!")
+
+ll_antrean = LinkedList()
+
+
+lokasi_file = 'data/pesanan.csv' 
+
+muat_data_csv(lokasi_file, ll_antrean)
+
+if ll_antrean.size > 0:
+    print("\n3 Antrean Terdepan Saat Ini:")
+    current = ll_antrean.head
+    for i in range(3):
+        if current is not None:
+            print(f"{i+1}. [{current.data[0]}] {current.data[1]} (Prioritas: {current.data[5]})")
+            current = current.next
