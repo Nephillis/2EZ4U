@@ -11,8 +11,6 @@ from backend.m1_pesanan import Array, LinkedList
 from backend.m2_antrean import Stack, splitToken, cek_prioritas, postfix, hitung
 from backend.m3_laporan import insertion_sort, merge_sort, linear_search, binary_search
 
-# Aturan proyek: tanpa dict, set, sorted(), .sort(), heapq, bisect, collections, literal {}.
-# Semua struktur di berkas ini memakai list/tuple biasa dan struktur buatan sendiri (backend/).
 
 BATAS_INSERTION = 20000       # insertion sort menolak data lebih besar dari ini (tidak membeku)
 SELESAI_KOSONG = 10 ** 9      # pesanan tanpa waktu selesai diurutkan paling belakang
@@ -21,9 +19,6 @@ WARNA_NAVY = "#2c405a"
 WARNA_MENU_AKTIF = "#d9e8f5"
 
 
-# =====================================================================
-# Fungsi bantu format tampilan
-# =====================================================================
 def fmt_int(n):
     """19850 -> '19.850' (pemisah ribuan titik, seperti di PDF)."""
     return f"{n:,}".replace(",", ".")
@@ -99,9 +94,6 @@ def pecah_csv(baris):
     return hasil
 
 
-# =====================================================================
-# Model data
-# =====================================================================
 class Pesanan:
     """Satu baris pesanan.csv. Dibandingkan menurut oid (default untuk
     merge_sort / binary_search / linear_search di backend M3)."""
@@ -196,10 +188,6 @@ def hitung_pemindahan_merge(n):
     kiri = n // 2
     return n + hitung_pemindahan_merge(kiri) + hitung_pemindahan_merge(n - kiri)
 
-
-# =====================================================================
-# Mesin kasir (M2): validasi + jejak langkah infix -> postfix -> total
-# =====================================================================
 def validasi_infix(teks):
     """Mengembalikan pesan galat (str) bila ekspresi tidak valid, None bila valid.
     Perlu karena postfix() di backend akan berputar tanpa henti bila ada ')' berlebih."""
@@ -260,7 +248,6 @@ def jejak_kasir(ekspresi):
     st = Stack()
     keluar = Array()
 
-    # ---- Tahap 1: infix -> postfix ----
     for i in range(token.size):
         t = token.get(i)
         no = "1." + str(i + 1)
@@ -303,7 +290,6 @@ def jejak_kasir(ekspresi):
     baris.append(("1.akhir", "-", "pop sisa stack: " + sisa.strip(),
                   isi_larik_teks(st.data), isi_larik_teks(keluar)))
 
-    # ---- Tahap 2: evaluasi postfix ----
     sv = Stack()
     for i in range(keluar.size):
         t = keluar.get(i)
@@ -331,9 +317,6 @@ def jejak_kasir(ekspresi):
     return baris
 
 
-# =====================================================================
-# Aplikasi
-# =====================================================================
 class Aplikasi2EZ4U:
     def __init__(self, root):
         self.root = root
@@ -353,20 +336,15 @@ class Aplikasi2EZ4U:
         self.bangun_ui()
         self.halaman_awal()
 
-    # -----------------------------------------------------------------
-    # Pembangunan antarmuka
-    # -----------------------------------------------------------------
     def bangun_ui(self):
         style = ttk.Style()
         style.configure("Treeview", rowheight=22)
 
-        # 1. HEADER
         header = tk.Frame(self.root, bg=WARNA_NAVY, height=40)
         header.pack(side=tk.TOP, fill=tk.X)
         tk.Label(header, text="2EZ4U Food Delivery", bg=WARNA_NAVY, fg="white",
                  font=("Arial", 12, "bold")).pack(side=tk.LEFT, padx=10, pady=8)
 
-        # 5. FOOTER / STATUS BAR (dipack dulu supaya tidak terdorong keluar jendela)
         footer = tk.Frame(self.root, bg="#f0f0f0")
         footer.pack(side=tk.BOTTOM, fill=tk.X)
         self.lbl_status = tk.Label(footer, text=" [ siap ] ", bg=WARNA_NAVY, fg="white",
@@ -376,7 +354,6 @@ class Aplikasi2EZ4U:
         main_frame = tk.Frame(self.root)
         main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # 2. PANEL KIRI: daftar menu
         left_panel = tk.Frame(main_frame, width=280, bg="#f0f0f0", relief=tk.SUNKEN, borderwidth=1)
         left_panel.pack(side=tk.LEFT, fill=tk.Y)
 
@@ -412,11 +389,9 @@ class Aplikasi2EZ4U:
         pasang_gulir(canvas)
         pasang_gulir(frame_menu)
 
-        # 3. PANEL KANAN: judul, form, hasil, tabel, COMMAND, penjelasan
         right = tk.Frame(main_frame, bg="white")
         right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=15, pady=10)
 
-        # -- bagian bawah dipack lebih dulu (side=BOTTOM) agar selalu terlihat --
         self.info_frame = tk.Frame(right, bg="#fffae6", bd=1, relief=tk.SOLID)
         self.info_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(8, 0))
         self.lbl_hint = tk.Label(self.info_frame, text="", bg="#fffae6", justify=tk.LEFT,
@@ -437,7 +412,6 @@ class Aplikasi2EZ4U:
         tk.Label(right, text="COMMAND", bg="white", font=("Arial", 9, "bold"),
                  anchor="w").pack(side=tk.BOTTOM, fill=tk.X, pady=(10, 2))
 
-        # -- bagian atas --
         self.lbl_judul = tk.Label(right, text="", font=("Arial", 14, "bold"), bg="white", anchor="w")
         self.lbl_judul.pack(fill=tk.X)
         self.lbl_deskripsi = tk.Label(right, text="", bg="white", fg="#555555", anchor="w",
@@ -498,9 +472,6 @@ class Aplikasi2EZ4U:
             else:
                 btn.config(bg="white")
 
-    # -----------------------------------------------------------------
-    # Fungsi bantu tampilan (form, hasil, tabel, log)
-    # -----------------------------------------------------------------
     def siapkan_halaman(self, judul, deskripsi, fields, label_tombol, aksi, hint):
         """Mengganti isi panel kanan. `fields` = list of tuple:
         ("entry", label, default, lebar, bantuan) atau ("combo", label, default, pilihan, bantuan)."""
@@ -613,9 +584,6 @@ class Aplikasi2EZ4U:
     def teks_tumpukan(self):
         return (f"undo {m2.stack_undo.data.size}, redo {m2.stack_redo.data.size}")
 
-    # -----------------------------------------------------------------
-    # Navigasi menu
-    # -----------------------------------------------------------------
     def halaman_awal(self):
         self.siapkan_halaman(
             "Selamat Datang di 2EZ4U",
@@ -662,9 +630,6 @@ class Aplikasi2EZ4U:
         elif nama == "SEARCH - BINARY SEARCH":
             self.halaman_binary()
 
-    # -----------------------------------------------------------------
-    # DATA: Load
-    # -----------------------------------------------------------------
     def aksi_load(self):
         self.siapkan_halaman(
             "Data: muat pesanan.csv",
@@ -761,9 +726,6 @@ class Aplikasi2EZ4U:
                           (35, 80, 150, 100, 90, 60, 65, 70, 70, 60), baris)
         self.catat("load", "M1 - larik", ms_load)
 
-    # -----------------------------------------------------------------
-    # M1: Array vs Linked List
-    # -----------------------------------------------------------------
     def struktur_m1(self, struktur):
         if struktur == "ARRAY":
             return self.arr
@@ -943,9 +905,6 @@ class Aplikasi2EZ4U:
         self.tampil_detail(p)
         self.catat(struktur.lower() + "_hapus", self.nama_modul_m1(struktur), ms)
 
-    # -----------------------------------------------------------------
-    # M2: Stack (kasir, undo, redo) dan Queue
-    # -----------------------------------------------------------------
     def halaman_kasir(self):
         self.siapkan_halaman(
             "Stack: hitung struk lewat postfix",
@@ -1176,9 +1135,6 @@ class Aplikasi2EZ4U:
         self.tabel_antrean(keluar, dengan_masuk=True)
         self.catat("queue_dequeue_circular", "M2 - queue circular", ms)
 
-    # -----------------------------------------------------------------
-    # M3: Sort dan Search
-    # -----------------------------------------------------------------
     def halaman_sort(self, jenis):
         if jenis == "INSERTION":
             judul = "Sort: insertion sort, O(n²)"
@@ -1309,8 +1265,6 @@ class Aplikasi2EZ4U:
 
         teks_bangun = ""
         if self.indeks_oid is None:
-            # Binary search menuntut daftar terurut menurut oid. Daftar ini dibangun SEKALI (salinan terpisah,
-            # data asli di Array tidak diubah) dan ongkos pengurutannya dicatat terang-terangan.
             self.sibuk("Membangun daftar terurut oid dengan merge sort (sekali saja), mohon tunggu...")
             salinan = Array()
             for i in range(self.arr.size):
