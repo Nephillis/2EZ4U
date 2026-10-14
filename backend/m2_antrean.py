@@ -1,4 +1,4 @@
-from backend.m1_pesanan import Array, LinkedList
+from m1_pesanan import Array
 
 class Stack:
     def __init__(self):
@@ -29,7 +29,7 @@ class Stack:
 
 
 def splitToken(expression):
-        hasil = []
+        hasil = Array()
         temp_angka = ""
 
         for char in expression:
@@ -56,9 +56,10 @@ def cek_prioritas(operator):
 def postfix(expression):
     token_list = splitToken(expression)
     stack_op = Stack()
-    hasil_postfix = []
+    hasil_postfix = Array()
 
-    for token in token_list:
+    for i in range(token_list.size):
+        token = token_list.get(i)
         if token.isdigit():
             hasil_postfix.append(token)
         elif token == "(":
@@ -80,7 +81,8 @@ def postfix(expression):
 def hitung(postfix_list):
     stack_hitung = Stack()
 
-    for token in postfix_list:
+    for i in range(postfix_list.size):
+        token = postfix_list.get(i)
         if token.isdigit():
             stack_hitung.push(int(token))
         else:
@@ -213,3 +215,5 @@ stack_undo = Stack()
 stack_redo = Stack()
 naive_queue = NaiveQueue()
 circular_queue = CircularQueue()
+
+#Tes
