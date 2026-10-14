@@ -1,4 +1,4 @@
-from m1_pesanan import Array
+from backend.m1_pesanan import Array
 
 def insertion_sort(arr):
     perbandingan = 0
