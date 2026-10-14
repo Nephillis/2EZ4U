@@ -1,4 +1,4 @@
-from m1_pesanan import Array
+from backend.m1_pesanan import Array
 
 class Stack:
     def __init__(self):
@@ -118,10 +118,14 @@ def undo():
         naive_queue.cancel_enqueue()
         circular_queue.cancel_enqueue()
     if action == "DEQUEUE":
-        naive_queue.cancel_dequeue(data)
-        circular_queue.cancel_dequeue(data)
+        # data = Array berisi pesanan yang keluar (urutan keluar).
+        # Kembalikan ke DEPAN antrean circular, mulai dari yang paling akhir keluar,
+        # supaya urutan aslinya pulih. (Dequeue naif hanya pembanding, tidak dicatat.)
+        for i in range(data.size - 1, -1, -1):
+            circular_queue.cancel_dequeue(data.get(i))
 
     stack_redo.push((action, data))
+    return catatan
 
 def redo():
     if stack_redo.is_empty():
@@ -134,10 +138,12 @@ def redo():
         naive_queue.enqueue(data)
         circular_queue.enqueue(data)
     if action == "DEQUEUE":
-        naive_queue.dequeue()
-        circular_queue.dequeue()
+        # kerjakan ulang aksi aslinya: keluarkan lagi sebanyak isi catatan
+        for i in range(data.size):
+            circular_queue.dequeue()
 
     stack_undo.push((action, data))
+    return catatan
 
 class NaiveQueue:
     def __init__(self):
@@ -171,7 +177,7 @@ class NaiveQueue:
         self.data.insert(0,nilai)
 
 class CircularQueue:
-    def __init__(self, capacity=32678):
+    def __init__(self, capacity=32768):
         self.capacity = capacity
         self.data = [None] * self.capacity
         self.front = 0

@@ -70,7 +70,7 @@ def linear_search(arr, target):
         perbandingan += 1
 
         if arr.get(i) == target:
-            return i, target
+            return i, perbandingan
 
     return -1, perbandingan
 
